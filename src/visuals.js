@@ -43,12 +43,23 @@ function makeMap(map, select) {
   });
   map.cells=cells;
   return (state)=>{
+    const palette = {
+      taxi: [[244,177,157],[153,42,65]],
+      bus: [[180,212,173],[39,103,65]],
+      subway: [[177,211,234],[39,95,149]]
+    }[state.mode];
+    const [light, dark] = palette;
+    const rgb = value => 'rgb('+value.join(' ')+')';
+    const accent = modes.find(mode => mode.id === state.mode).color;
+    document.querySelector('.poster').style.setProperty('--active-mode',accent);
+    document.querySelector('.legend i').style.background =
+      'linear-gradient(90deg,'+rgb(light)+','+rgb(dark)+')';
     const scores=places.map(([id])=>record(id,state.mode,state.time)?.demandValue ?? 0);
     for(const {node,nearest,distances} of cells){
       const weights=distances.map((d,i)=>scores[i]/340*Math.exp(-d/3300));
       const k=Math.min(1,Math.max(...weights)*(.83+.17*Math.sin(+node.getAttribute('x')*6+ +node.getAttribute('y'))));
-      node.style.fill='rgb('+Math.round(248-82*k)+' '+Math.round(192-141*k)+' '+Math.round(163-87*k)+')';
-      node.style.fillOpacity=k<.018 ? .055 : (.23+.65*k)*(places[nearest][0]===state.area?1:.72);
+      node.style.fill=rgb(light.map((value,index)=>Math.round(value+(dark[index]-value)*k)));
+      node.style.fillOpacity=k<.018 ? .075 : (.32+.64*k)*(places[nearest][0]===state.area?1:.82);
       node.classList.toggle('selected-cell',state.cell===node);
     }
     markers.forEach((el,i)=>el.setAttribute('aria-pressed',String(places[i][0]===state.area)));
