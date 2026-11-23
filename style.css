@@ -21,3 +21,5 @@
 .cell:hover,.selected-cell{stroke:var(--active-mode,#a8444c)}
 #map-summary{border-left-color:var(--active-mode,#a8444c)}
 #map-summary strong,#info strong{color:var(--active-mode,#a8444c)}
+#map{aspect-ratio:700/580;touch-action:none;cursor:grab}
+#map.panning,#map.panning .cell,#map.panning .marker{cursor:grabbing}
