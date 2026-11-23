@@ -81,3 +81,56 @@ document.addEventListener('keydown',event=>{
 el('map').addEventListener('click',event=>{
   if(!event.target.closest('.cell,.marker') && state.cell)selectArea(state.area);
 });
+function enableMapPanning(map) {
+  const view = {x:90,y:82,width:520,height:431};
+  let gesture = null;
+  let suppressClick = false;
+  function paint() {
+    map.setAttribute('viewBox',[view.x,view.y,view.width,view.height].join(' '));
+    placePopup();
+  }
+  map.setAttribute('tabindex','0');
+  map.setAttribute('aria-label','서울 지도. 드래그하거나 방향키로 이동');
+  map.addEventListener('pointerdown',event=>{
+    if(event.button!==0)return;
+    gesture={id:event.pointerId,x:event.clientX,y:event.clientY,startX:view.x,startY:view.y,moved:false};
+  });
+  window.addEventListener('pointermove',event=>{
+    if(!gesture || event.pointerId!==gesture.id)return;
+    const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+    if(Math.hypot(dx,dy)>5)gesture.moved=true;
+    if(!gesture.moved)return;
+    const scale=Math.min(map.clientWidth/view.width,map.clientHeight/view.height);
+    view.x=Math.max(0,Math.min(768-view.width,gesture.startX-dx/scale));
+    view.y=Math.max(0,Math.min(580-view.height,gesture.startY-dy/scale));
+    map.classList.add('panning');
+    paint();
+  });
+  window.addEventListener('pointerup',event=>{
+    if(!gesture || event.pointerId!==gesture.id)return;
+    suppressClick=gesture.moved;
+    gesture=null;
+    map.classList.remove('panning');
+    setTimeout(()=>suppressClick=false,0);
+  });
+  window.addEventListener('pointercancel',()=>{gesture=null;map.classList.remove('panning');});
+  map.addEventListener('click',event=>{
+    if(suppressClick){event.stopImmediatePropagation();event.preventDefault();}
+  },true);
+  map.addEventListener('wheel',event=>{
+    event.preventDefault();
+    view.x=Math.max(0,Math.min(768-view.width,view.x+event.deltaX*.35));
+    view.y=Math.max(0,Math.min(580-view.height,view.y+event.deltaY*.35));
+    paint();
+  },{passive:false});
+  map.addEventListener('keydown',event=>{
+    const steps={ArrowLeft:[-20,0],ArrowRight:[20,0],ArrowUp:[0,-20],ArrowDown:[0,20]};
+    if(event.target!==map || !steps[event.key])return;
+    event.preventDefault();
+    view.x=Math.max(0,Math.min(768-view.width,view.x+steps[event.key][0]));
+    view.y=Math.max(0,Math.min(580-view.height,view.y+steps[event.key][1]));
+    paint();
+  });
+  paint();
+}
+enableMapPanning(el('map'));
