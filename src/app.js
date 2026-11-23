@@ -25,10 +25,10 @@ const controls=modes.map((mode)=>{
   b.prepend(icon);
   return b;
 });
-for(const [id,label] of places)el('regions').add(new Option(label,id));
-el('regions').addEventListener('change',e=>selectArea(e.target.value));
+
+
 function render(){
-  el('regions').value=state.area;
+
   hours.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===state.time)));
   controls.forEach((b,i)=>b.setAttribute('aria-pressed',String(modes[i].id===state.mode)));
   updateMap(state);
@@ -90,7 +90,7 @@ function enableMapPanning(map) {
     placePopup();
   }
   map.setAttribute('tabindex','0');
-  map.setAttribute('aria-label','서울 지도. 드래그하거나 방향키로 이동');
+  map.setAttribute('aria-label','서울 지도. 휠로 확대 또는 축소, 드래그하거나 방향키로 이동');
   map.addEventListener('pointerdown',event=>{
     if(event.button!==0)return;
     gesture={id:event.pointerId,x:event.clientX,y:event.clientY,startX:view.x,startY:view.y,moved:false};
@@ -119,8 +119,18 @@ function enableMapPanning(map) {
   },true);
   map.addEventListener('wheel',event=>{
     event.preventDefault();
-    view.x=Math.max(0,Math.min(768-view.width,view.x+event.deltaX*.35));
-    view.y=Math.max(0,Math.min(580-view.height,view.y+event.deltaY*.35));
+    const point=map.createSVGPoint();
+    point.x=event.clientX;
+    point.y=event.clientY;
+    const anchor=point.matrixTransform(map.getScreenCTM().inverse());
+    const ratioX=(anchor.x-view.x)/view.width;
+    const ratioY=(anchor.y-view.y)/view.height;
+    const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?map.clientHeight:1);
+    const width=Math.max(200,Math.min(700,view.width*Math.exp(Math.max(-180,Math.min(180,delta))*.002)));
+    view.height=width*580/700;
+    view.width=width;
+    view.x=Math.max(0,Math.min(768-view.width,anchor.x-ratioX*view.width));
+    view.y=Math.max(0,Math.min(580-view.height,anchor.y-ratioY*view.height));
     paint();
   },{passive:false});
   map.addEventListener('keydown',event=>{
