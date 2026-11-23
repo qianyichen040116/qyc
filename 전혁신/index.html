@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>전혁신</title>
+<link rel="stylesheet" href="./style.css">
+<script defer src="./src/geography.js"></script>
+<script defer src="./src/mobility.js"></script>
+<script defer src="./src/visuals.js"></script>
+<script defer src="./src/app.js"></script>
+<main>
+<header><span>한양대학교 ERICA캠퍼스 · 정보서비스디자인</span><span>융합디자인 · 전혁신</span></header>
+<div class="poster">
+<aside><div class="brand">SEOUL / NIGHT MOBILITY</div><div class="timeline-heading"><p class="tag">02 / WHEN WE MOVE</p><span>22:00 — 04:00</span></div><h2>밤을 따라<br>흐르는 이동</h2><p class="hint">시간대를 선택하세요</p><div id="timeline"><svg viewBox="0 0 100 300" preserveAspectRatio="none" aria-hidden="true"></svg><div id="hours" role="group" aria-label="시간대"></div></div></aside>
+<section class="map" aria-label="서울 심야 이동 지도">
+<div class="map-top"><span>서울특별시 · 시뮬레이션 데이터</span><div class="legend">낮음 <i></i> 높음</div></div>
+<svg id="map" viewBox="0 0 700 580" aria-label="서울시 지도와 이동 수요 격자"></svg>
+<h1>SEOUL NIGHT MOBILITY</h1>
+
+<div id="map-summary" hidden aria-live="polite"></div>
+</section>
+<section class="bottom"><div><p class="tag">03 / HOW WE MOVE</p><div id="modes" role="group" aria-label="교통수단"></div><svg id="shares" viewBox="0 0 200 78" role="img" aria-label="선택 지역의 수단별 수요 지수 비중"></svg><small id="share-label"></small></div><div id="info" aria-live="polite"></div></section>
+</div>
+<section class="deep"><p class="tag">05 / AREA EXPLORER</p><h2 id="detail-title"></h2><p id="detail-note"></p><svg id="detail-chart" viewBox="0 0 650 180" role="img" aria-label="선택 교통수단의 시간대별 수요 막대그래프"></svg><div id="detail-data"></div></section><section class="deep"><p class="tag">06 / DESIGN NOTES</p><h2>공간, 시간, 교통수단</h2><div class="design-gallery"><figure><img src="../assets/detail-map.png" alt="원본 포스터의 격자 지도"><figcaption>공간 / 격자로 읽는 분포</figcaption></figure><figure><img src="../assets/detail-time.png" alt="원본 포스터의 세로 추이 곡선"><figcaption>시간 / 곡선으로 읽는 변화</figcaption></figure><figure><img src="../assets/detail-arc.png" alt="원본 포스터의 교통수단 반원 도표"><figcaption>구성 / 원호로 읽는 비율</figcaption></figure></div><p>지도에서 이동의 공간 분포를 살펴보고, 세로 시간축을 따라 야간의 변화를 비교합니다. 하단 원호는 각 시간대의 교통수단 구성을 보여줍니다.</p><p>중간발표에서는 점 기호로 교통수단을 구분했습니다. 이후 시간대별 비교를 위해 원호를 도입하고, 지도에는 간격이 일정한 격자를 적용했습니다.</p><a href="../assets/poster.png">중간발표 포스터 보기 ↗</a></section><section class="deep source-section"><p class="tag">07 / DATA & METHOD</p><h2>사용한 데이터와 표현 방법</h2><div class="source-scroll"><table><thead><tr><th>자료</th><th>출처 및 상태</th><th>사용 목적</th><th>기준 / 단위</th></tr></thead><tbody>
+<tr><th>서울 행정경계</th><td><a href="https://www.openstreetmap.org/relation/2297418">OpenStreetMap 2297418</a></td><td>경계선과 격자 범위</td><td>2026.10.27 저장 / Web Mercator</td></tr>
+<tr><th>도로·하천 배경</th><td>© OpenStreetMap contributors · ODbL</td><td>위치 관계 및 지리적 배경</td><td>z11 타일 / 동일 투영</td></tr>
+<tr><th>홍대 등 5개 지점</th><td>인근 역을 기준으로 설정한 좌표</td><td>권역 선택 및 가상 분포 중심</td><td>대표 지점 / 행정구역 경계와 구분</td></tr>
+<tr><th>교통수단별 수요</th><td>시뮬레이션 · 5개 권역 × 3개 수단 × 6개 시간대</td><td>추이·비율·선택 정보</td><td>가상 시나리오 / 수요 지수</td></tr>
+<tr><th>격자별 수요</th><td>권역 값을 거리 가중치로 배분</td><td>격자 클릭 정보</td><td>모델 추정 지수</td></tr>
+<tr><th>중간발표 포스터</th><td>전혁신 · 기존 작업</td><td>구도·색·타이포그래피 참고</td><td>2026학년도 2학기</td></tr>
+</tbody></table></div><p>실측 데이터로 교체할 때는 집계 범위, 단위, 관측 시점과 결측 상태를 함께 확인합니다. 현재 수요 지수는 실제 승객 수나 대기 인원을 의미하지 않습니다.</p></section><footer><p>서울의 심야 이동 정보를 시간과 지역, 교통수단에 따라 직접 탐색할 수 있는 인터랙티브 정보 시각화 웹사이트입니다.</p><details><summary>데이터 및 지도 출처</summary><p><a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors · ODbL</a></p><p>열지도, 도표와 수치는 시뮬레이션입니다. 수요 지수는 비교용이며 실시간 대기 인원, 승객 수, 실제 운행 시간표와 구분됩니다. 지하철 이용 가능성은 역·노선·요일에 따라 달라집니다.</p><p>지도와 서울시 경계는 OpenStreetMap에서 가져왔으며 동일한 Web Mercator 좌표계로 정렬했습니다. 격자는 지역 중심 주변의 가상 분포를 나타냅니다.</p><a href="../assets/poster.png">중간발표 원본 포스터 보기</a></details></footer>
+</main>
+</html>
+
+
